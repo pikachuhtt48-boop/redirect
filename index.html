@@ -52,12 +52,14 @@
 <body>
   <div class="play"></div>
   <script>
-    var url = localStorage.getItem('redirect_target_url');
-    if (url) {
-      window.location.href = url;
-    } else {
-      window.location.href = 'https://pikachuhtt48-boop.github.io/redirect/admin.html';
-    }
+    fetch('https://raw.githubusercontent.com/pikachuhtt48-boop/redirect/main/config.json?t=' + Date.now())
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (d && d.url) {
+          window.location.href = d.url;
+        }
+      })
+      .catch(function() {});
   </script>
 </body>
 </html>
