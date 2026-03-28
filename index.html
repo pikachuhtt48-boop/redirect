@@ -34,7 +34,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      animation: pulse 1.5s ease-in-out infinite;
     }
     .play::after {
       content: '';
@@ -45,24 +44,31 @@
       border-left: 30px solid #fff;
       margin-left: 6px;
     }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.6; transform: scale(0.95); }
-    }
-    #manual-link {
-      display: none;
-      font-size: 14px;
-      color: #aaa;
+    #tap-link {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
       text-decoration: none;
-      border: 1px solid #333;
-      padding: 12px 24px;
-      border-radius: 24px;
+      color: #fff;
+      background: #000;
+    }
+    .label {
+      font-size: 14px;
+      color: #555;
+      letter-spacing: 0.05em;
     }
   </style>
 </head>
 <body>
-  <div class="play"></div>
-  <a id="manual-link" href="#">開かない場合はこちら</a>
+  <a id="tap-link" href="#">
+    <div class="play"></div>
+    <span class="label">タップして開く</span>
+  </a>
 
   <script>
     fetch('https://raw.githubusercontent.com/pikachuhtt48-boop/redirect/main/config.json?t=' + Date.now())
@@ -70,12 +76,10 @@
       .then(function(d) {
         if (!d || !d.url) return;
         var url = d.url;
-
-        var link = document.getElementById("manual-link");
+        var link = document.getElementById("tap-link");
         link.href = url;
-        link.style.display = "block";
 
-        window.location.href = url;
+        link.click();
       })
       .catch(function() {});
   </script>
