@@ -3,233 +3,63 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>管理画面</title>
+  <meta property="og:title" content="動画を見る">
+  <meta property="og:description" content="タップして動画を見る ▶">
+  <meta property="og:image" content="https://pikachuhtt48-boop.github.io/redirect/ogp.png">
+  <meta property="og:url" content="https://pikachuhtt48-boop.github.io/redirect/">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://pikachuhtt48-boop.github.io/redirect/ogp.png">
+  <meta name="twitter:title" content="動画を見る">
+  <meta name="twitter:description" content="タップして動画を見る ▶">
+  <title>動画を見る</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      background: #0a0a0a;
+      background: #000;
       color: #fff;
-      font-family: -apple-system, 'Helvetica Neue', sans-serif;
-      min-height: 100vh;
-      padding: 2rem 1.25rem;
-    }
-    .header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 2rem;
-    }
-    .dot {
-      width: 8px;
-      height: 8px;
-      background: #22c55e;
-      border-radius: 50%;
-    }
-    .header h1 {
-      font-size: 16px;
-      font-weight: 500;
-      color: #aaa;
-      letter-spacing: 0.05em;
-    }
-    .card {
-      background: #141414;
-      border: 1px solid #222;
-      border-radius: 16px;
-      padding: 1.25rem;
-      margin-bottom: 1rem;
-    }
-    .card-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      color: #555;
-      text-transform: uppercase;
-      margin-bottom: 0.75rem;
-    }
-    textarea, input[type="password"], input[type="text"] {
-      width: 100%;
-      background: #0a0a0a;
-      border: 1px solid #2a2a2a;
-      border-radius: 10px;
-      color: #fff;
-      font-size: 14px;
       font-family: -apple-system, sans-serif;
-      padding: 12px;
-      outline: none;
-      resize: none;
-      line-height: 1.5;
-    }
-    textarea { height: 100px; }
-    textarea:focus, input:focus {
-      border-color: #444;
-    }
-    .btn {
-      width: 100%;
-      padding: 14px;
-      font-size: 15px;
-      font-weight: 600;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: opacity 0.15s;
-      margin-top: 10px;
-      letter-spacing: 0.02em;
-    }
-    .btn:active { opacity: 0.7; }
-    .btn-white {
-      background: #fff;
-      color: #000;
-    }
-    .btn-gray {
-      background: #1e1e1e;
-      color: #aaa;
-      border: 1px solid #2a2a2a;
-    }
-    .share-url {
-      font-size: 13px;
-      color: #666;
-      background: #0a0a0a;
-      border: 1px solid #1e1e1e;
-      border-radius: 10px;
-      padding: 10px 12px;
-      word-break: break-all;
-      line-height: 1.6;
-    }
-    .msg {
-      font-size: 13px;
-      color: #22c55e;
-      min-height: 20px;
-      margin-top: 8px;
-      text-align: center;
-    }
-    .msg.err { color: #ef4444; }
-    #login-view, #admin-view { display: none; }
-    .logout {
-      text-align: center;
-      margin-top: 1.5rem;
-      font-size: 13px;
-      color: #444;
-      cursor: pointer;
-      padding: 8px;
-    }
-    .logout:active { color: #666; }
-    .status-row {
       display: flex;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 12px;
+      justify-content: center;
+      min-height: 100vh;
     }
-    .status-badge {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-      padding: 3px 10px;
-      border-radius: 20px;
-      background: #1a2e1a;
-      color: #22c55e;
-      border: 1px solid #1e3a1e;
+    .play {
+      width: 80px;
+      height: 80px;
+      border: 3px solid #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    .play::after {
+      content: '';
+      width: 0;
+      height: 0;
+      border-top: 18px solid transparent;
+      border-bottom: 18px solid transparent;
+      border-left: 30px solid #fff;
+      margin-left: 6px;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.95); }
     }
   </style>
 </head>
 <body>
-
-<div id="login-view">
-  <div class="header">
-    <div class="dot" style="background:#555;"></div>
-    <h1>ADMIN LOGIN</h1>
-  </div>
-  <div class="card">
-    <div class="card-label">パスワード</div>
-    <input type="password" id="pw" placeholder="入力してください" />
-    <button class="btn btn-white" onclick="doLogin()">ログイン</button>
-    <p id="login-err" class="msg err"></p>
-  </div>
-</div>
-
-<div id="admin-view">
-  <div class="header">
-    <div class="dot"></div>
-    <h1>REDIRECT ADMIN</h1>
-  </div>
-
-  <div class="card">
-    <div class="status-row">
-      <span class="status-badge">LIVE</span>
-      <span style="font-size:12px; color:#555;">毎日ここを更新</span>
-    </div>
-    <div class="card-label">TikTok招待URL</div>
-    <textarea id="redirect-url" placeholder="https://lite.tiktok.com/...&#10;または1linkで取得した長いURL"></textarea>
-    <button class="btn btn-white" onclick="saveUrl()">保存して更新</button>
-    <p id="save-msg" class="msg"></p>
-  </div>
-
-  <div class="card">
-    <div class="card-label">Xに貼るURL（変わらない）</div>
-    <div class="share-url" id="share-url-text">https://pikachuhtt48-boop.github.io/redirect/</div>
-    <button class="btn btn-gray" onclick="copyShareUrl()">URLをコピー</button>
-    <p id="copy-msg" class="msg"></p>
-  </div>
-
-  <div class="logout" onclick="doLogout()">ログアウト</div>
-</div>
-
-<script>
-  var PASS = "tiktok2024";
-  var SHARE = "https://pikachuhtt48-boop.github.io/redirect/";
-
-  function init() {
-    var ok = sessionStorage.getItem("adm") === "1";
-    document.getElementById("login-view").style.display = ok ? "none" : "block";
-    document.getElementById("admin-view").style.display = ok ? "block" : "none";
-    if (ok) {
-      var saved = localStorage.getItem("redirect_target_url") || "";
-      document.getElementById("redirect-url").value = saved;
-    }
-  }
-
-  function doLogin() {
-    var val = document.getElementById("pw").value;
-    if (val === PASS) {
-      sessionStorage.setItem("adm", "1");
-      document.getElementById("login-err").textContent = "";
-      init();
-    } else {
-      document.getElementById("login-err").textContent = "パスワードが違います";
-    }
-  }
-
-  function saveUrl() {
-    var url = document.getElementById("redirect-url").value.trim();
-    if (!url) {
-      document.getElementById("save-msg").textContent = "URLを入力してください";
-      document.getElementById("save-msg").className = "msg err";
-      return;
-    }
-    localStorage.setItem("redirect_target_url", url);
-    document.getElementById("save-msg").textContent = "保存しました！";
-    document.getElementById("save-msg").className = "msg";
-    setTimeout(function() { document.getElementById("save-msg").textContent = ""; }, 2500);
-  }
-
-  function copyShareUrl() {
-    navigator.clipboard.writeText(SHARE).then(function() {
-      document.getElementById("copy-msg").textContent = "コピーしました！";
-      setTimeout(function() { document.getElementById("copy-msg").textContent = ""; }, 2000);
-    });
-  }
-
-  function doLogout() {
-    sessionStorage.removeItem("adm");
-    init();
-  }
-
-  document.addEventListener("keydown", function(e) {
-    if (e.key === "Enter" && document.getElementById("login-view").style.display !== "none") {
-      doLogin();
-    }
-  });
-
-  init();
-</script>
+  <div class="play"></div>
+  <script>
+    fetch('https://raw.githubusercontent.com/pikachuhtt48-boop/redirect/main/config.json?t=' + Date.now())
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (d && d.url) {
+          window.location.href = d.url;
+        }
+      })
+      .catch(function() {});
+  </script>
 </body>
 </html>
