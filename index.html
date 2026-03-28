@@ -1,17 +1,63 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta property="og:title" content="動画を見る">
-  <meta property="og:description" content="こちらをタップ▶️">
+  <meta property="og:description" content="タップして動画を見る ▶">
   <meta property="og:image" content="https://pikachuhtt48-boop.github.io/redirect/ogp.png">
   <meta property="og:url" content="https://pikachuhtt48-boop.github.io/redirect/">
+  <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://pikachuhtt48-boop.github.io/redirect/ogp.png">
+  <meta name="twitter:title" content="動画を見る">
+  <meta name="twitter:description" content="タップして動画を見る ▶">
+  <title>動画を見る</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      color: #fff;
+      font-family: -apple-system, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .play {
+      width: 80px;
+      height: 80px;
+      border: 3px solid #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    .play::after {
+      content: '';
+      width: 0;
+      height: 0;
+      border-top: 18px solid transparent;
+      border-bottom: 18px solid transparent;
+      border-left: 30px solid #fff;
+      margin-left: 6px;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.95); }
+    }
+  </style>
 </head>
 <body>
+  <div class="play"></div>
   <script>
-    window.location.href = "https://lite.tiktok.com/t/ZS98ewJ45YLAg-pTA0y/";
+    var url = localStorage.getItem('redirect_target_url');
+    if (url) {
+      window.location.href = url;
+    } else {
+      window.location.href = 'https://pikachuhtt48-boop.github.io/redirect/admin.html';
+    }
   </script>
-  <p><a href="https://lite.tiktok.com/t/ZS98ewJ45YLAg-pTA0y/">こちらをタップ▶️</a></p>
 </body>
 </html>
