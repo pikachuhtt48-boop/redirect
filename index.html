@@ -15,73 +15,73 @@
   <title>動画を見る</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
+    html, body {
+      width: 100%; height: 100%;
+    }
+    #tap-area {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       background: #000;
-      color: #fff;
-      font-family: -apple-system, sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
-      gap: 24px;
+      gap: 28px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
     }
     .play {
-      width: 80px;
-      height: 80px;
+      width: 90px;
+      height: 90px;
       border: 3px solid #fff;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
+      animation: pulse 1.8s ease-in-out infinite;
     }
     .play::after {
       content: '';
-      width: 0;
-      height: 0;
-      border-top: 18px solid transparent;
-      border-bottom: 18px solid transparent;
-      border-left: 30px solid #fff;
-      margin-left: 6px;
+      width: 0; height: 0;
+      border-top: 20px solid transparent;
+      border-bottom: 20px solid transparent;
+      border-left: 34px solid #fff;
+      margin-left: 8px;
     }
-    #tap-link {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 24px;
-      text-decoration: none;
-      color: #fff;
-      background: #000;
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.93); }
     }
     .label {
-      font-size: 14px;
+      font-family: -apple-system, sans-serif;
+      font-size: 15px;
       color: #555;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.08em;
     }
   </style>
 </head>
 <body>
-  <a id="tap-link" href="#">
+  <div id="tap-area">
     <div class="play"></div>
-    <span class="label">タップして開く</span>
-  </a>
+    <span class="label">タップして視聴する</span>
+  </div>
 
   <script>
+    var destUrl = '';
+
     fetch('https://raw.githubusercontent.com/pikachuhtt48-boop/redirect/main/config.json?t=' + Date.now())
       .then(function(r) { return r.json(); })
       .then(function(d) {
-        if (!d || !d.url) return;
-        var url = d.url;
-        var link = document.getElementById("tap-link");
-        link.href = url;
-
-        link.click();
+        if (d && d.url) destUrl = d.url;
       })
       .catch(function() {});
+
+    document.getElementById('tap-area').addEventListener('click', function() {
+      if (destUrl) {
+        window.location.href = destUrl;
+      }
+    });
   </script>
 </body>
 </html>
