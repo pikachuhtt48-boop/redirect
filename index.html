@@ -6,15 +6,27 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
+
+  <!-- スクリプトでOGP画像を動的に書き換え -->
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const customImg = params.get('img');
+    const defaultImg = "https://pikachuhtt48-boop.github.io/redirect/ogp.png";
+    const displayImg = customImg ? decodeURIComponent(customImg) : defaultImg;
+
+    // クローラーが読み取れるようにタグを書き出す
+    document.write('<meta property="og:image" content="' + displayImg + '">');
+    document.write('<meta name="twitter:image" content="' + displayImg + '">');
+  </script>
+
   <meta property="og:title" content="動画を見る">
   <meta property="og:description" content="タップして動画を見る ▶">
-  <meta property="og:image" content="https://pikachuhtt48-boop.github.io/redirect/ogp.png">
   <meta property="og:url" content="https://pikachuhtt48-boop.github.io/redirect/">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://pikachuhtt48-boop.github.io/redirect/ogp.png">
   <meta name="twitter:title" content="動画を見る">
   <meta name="twitter:description" content="タップして動画を見る ▶">
+  
   <title>動画を見る</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -73,6 +85,7 @@
   <script>
     var destUrl = '';
 
+    // config.json からリダイレクト先を取得
     fetch('https://raw.githubusercontent.com/pikachuhtt48-boop/redirect/main/config.json?t=' + Date.now())
       .then(function(r) { return r.json(); })
       .then(function(d) {
