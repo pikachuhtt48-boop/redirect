@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>OGP画像作成ツール</title>
+  <style>
+    body { background: #0a0a0a; color: #fff; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+    .card { background: #141414; border: 1px solid #222; border-radius: 16px; padding: 24px; width: 90%; max-width: 400px; text-align: center; }
+    .drop-area { border: 2px dashed #333; border-radius: 12px; padding: 40px 20px; cursor: pointer; margin-bottom: 20px; transition: 0.2s; }
+    .drop-area:hover { border-color: #555; background: #1a1a1a; }
+    #preview { width: 100%; border-radius: 8px; display: none; margin-bottom: 15px; }
+    .btn { background: #fff; color: #000; border: none; padding: 14px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; }
+    .btn:disabled { background: #333; color: #666; cursor: not-allowed; }
+    .result { margin-top: 20px; background: #000; padding: 15px; border-radius: 10px; font-size: 12px; word-break: break-all; display: none; text-align: left; }
+    .status { font-size: 13px; margin-top: 10px; color: #22c55e; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h2 style="font-size: 18px; margin-bottom: 20px;">OGP Image Uploader</h2>
+  
+  <div class="drop-area" onclick="document.getElementById('file-input').click()">
+    <input type="file" id="file-input" accept="image/*" style="display:none">
+    <img id="preview">
+    <div id="label-text" style="color: #666;">タップして画像を選択</div>
+  </div>
+
+  <button id="upload-btn" class="btn" onclick="startUpload()">URLを発行する</button>
+  <div id="status" class="status"></div>
+
+  <div id="result" class="result">
+    <div style="color: #555; margin-bottom: 8px;">SNS貼り付け用URL:</div>
+    <div id="output-url" style="color: #fff; margin-bottom: 10px;"></div>
+    <button class="btn" style="background:#222; color:#fff; font-size:12px;" onclick="copyResult()">URLをコピー</button>
+  </div>
+</div>
+
+<script>
+  const REPO = "pikachuhtt48-boop/redirect";
+  const fileInput = document.getElementById('file-input');
+  const preview = document.getElementById('preview');
+  const status = document.getElementById('status');
+
+  fileInput.onchange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        preview.src = event.target.result;
+        preview.style.display = 'block';
+        document.getElementById('label-text').style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  async function startUpload() {
+    const token = localStorage.getItem("gh_token");
+    const file = fileInput.files[0];
+
+    if (!token) { alert("admin画面で設定を先に済ませてください"); return; }
+    if (!file) { alert("画像を選んでください"); return; }
+
+    const btn = document.getElementById('upload-btn');
+    btn.disabled = true;
+    status.innerText = "GitHubに保存中...";
+
+    const fileName = `images/${Date.now()}_${file.name}`;
+    const base64Content = preview.src.split(',')[1];
+
+    try {
+      const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${fileName}`, {
+        method: 'PUT',
+        headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: "Upload OGP", content: base64Content })
+      });
+
+      if (res.ok) {
+        const rawUrl = `https://raw.githubusercontent.com/${REPO}/main/${fileName}`;
+        const finalUrl = `https://pikachuhtt48-boop.github.io/redirect/?img=${encodeURIComponent(rawUrl)}`;
+        
+        document.getElementById('result').style.display = 'block';
+        document.getElementById('output-url').innerText = finalUrl;
+        status.innerText = "成功しました！";
+      } else {
+        status.innerText = "エラー：トークンが無効かもしれません";
+      }
+    } catch (err) {
+      status.innerText = "エラーが発生しました";
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  function copyResult() {
+    const text = document.getElementById('output-url').innerText;
+    navigator.clipboard.writeText(text);
+    alert("コピーしました");
+  }
+</script>
+</body>
+</html>
