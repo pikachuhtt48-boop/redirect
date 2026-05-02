@@ -31,13 +31,15 @@
 
   <div id="result" class="result">
     <div style="color: #555; margin-bottom: 8px;">SNS貼り付け用URL:</div>
-    <div id="output-url" style="color: #fff; margin-bottom: 10px;"></div>
-    <button class="btn" style="background:#222; color:#fff; font-size:12px;" onclick="copyResult()">URLをコピー</button>
+    <div id="output-url" style="color: #fff; margin-bottom: 10px; user-select: all;"></div>
+    <button class="btn" style="background:#222; color:#fff; font-size:12px; margin-top:10px;" onclick="copyResult()">URLをコピー</button>
   </div>
 </div>
 
 <script>
   const REPO = "pikachuhtt48-boop/redirect";
+  const MY_DOMAIN = "share-videos.jp"; // ドメイン名
+  
   const fileInput = document.getElementById('file-input');
   const preview = document.getElementById('preview');
   const status = document.getElementById('status');
@@ -78,7 +80,8 @@
 
       if (res.ok) {
         const rawUrl = `https://raw.githubusercontent.com/${REPO}/main/${fileName}`;
-        const finalUrl = `https://share-videos.jp/index.html?img=${encodeURIComponent(rawUrl)}`;
+        // 新しいドメインを反映したURLを生成
+        const finalUrl = `https://${MY_DOMAIN}/index.html?img=${encodeURIComponent(rawUrl)}`;
         
         document.getElementById('result').style.display = 'block';
         document.getElementById('output-url').innerText = finalUrl;
@@ -93,10 +96,40 @@
     }
   }
 
+  // スマホ対応版のコピー機能
   function copyResult() {
     const text = document.getElementById('output-url').innerText;
-    navigator.clipboard.writeText(text);
-    alert("コピーしました");
+    if (!text) return;
+
+    // 一時的な入力エリアを作ってコピーする（スマホで一番確実な方法）
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-9999px";
+    textArea.style.top = "0";
+    document.body.appendChild(textArea);
+    
+    textArea.focus();
+    textArea.select();
+    textArea.setSelectionRange(0, 99999); // iOS向け
+
+    try {
+      const successful = document.execCommand('copy');
+      if (successful) {
+        alert("URLをコピーしました！");
+      } else {
+        throw new Error();
+      }
+    } catch (err) {
+      // 失敗した場合はクリップボードAPIを試す
+      navigator.clipboard.writeText(text).then(() => {
+        alert("コピーしました");
+      }).catch(() => {
+        alert("コピーに失敗しました。URLを長押ししてコピーしてください。");
+      });
+    }
+    
+    document.body.removeChild(textArea);
   }
 </script>
 </body>
